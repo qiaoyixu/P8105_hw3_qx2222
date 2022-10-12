@@ -1,0 +1,54 @@
+---
+title: "P8105_hw3_qx2222"
+author: "Qiaoyi Xu"
+date: "2022-10-12"
+output: github_document
+---
+
+
+```{r load_libraries}
+library(tidyverse)
+library(ggplot2)
+```
+
+
+
+### Problem 1
+```{r}
+library(p8105.datasets)
+data("instacart")
+
+```
+
+How many aisles are there, and which aisles are the most items ordered from?
+There are `r nrow(distinct(instacart, aisle))` aisles. fresh fruits and fresh vegetables are the most items ordered from. 
+
+Make a plot that shows the number of items ordered in each aisle, limiting this to aisles with more than 10000 items ordered. Arrange aisles sensibly, and organize your plot so others can read it.
+
+```{r}
+instacart %>%
+  group_by(aisle)%>%
+  summarise(n_each_aisle = n()) %>%
+  filter(n_each_aisle >= 10000) %>%
+  arrange(desc(n_each_aisle)) %>%
+  mutate(ordernumber_level = if_else(n_each_aisle <= 20000, "<=20k",
+                                     if_else(n_each_aisle <= 30000 & n_each_aisle > 20000, "20k-30k",
+                                             if_else(n_each_aisle <= 40000 & n_each_aisle > 30000, "30k-40k",
+                                                     if_else(n_each_aisle <= 50000 & n_each_aisle > 40000, "40k-50k",
+                                                             if_else(n_each_aisle > 50000, ">50k", NA_character_))))))%>%
+  mutate(ordernumber_level = factor(ordernumber_level, levels = c(">50k", "40k-50k", "30k-40k", "20k-30k","<=20k")))%>%
+  ggplot(aes(x = aisle, y = n_each_aisle)) +
+  geom_col() +
+  facet_wrap(vars(ordernumber_level), ncol = 1) +
+  labs(title = "number of orders on each item", y = "number of orders") +
+  theme_bw(base_size = 5) +
+  theme(axis.text.x = element_text(face="bold", color="#993333", size=6, angle=45))
+
+```
+
+Make a table showing the three most popular items in each of the aisles “baking ingredients”, “dog food care”, and “packaged vegetables fruits”. Include the number of times each item is ordered in your table.
+
+
+
+
+Make a table showing the mean hour of the day at which Pink Lady Apples and Coffee Ice Cream are ordered on each day of the week; format this table for human readers (i.e. produce a 2 x 7 table).
