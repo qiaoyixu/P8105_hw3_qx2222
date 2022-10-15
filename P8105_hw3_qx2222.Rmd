@@ -131,38 +131,61 @@ instacart %>%
 
 
 ### Problem 2
-Load, tidy, and otherwise wrangle the data. Your final dataset should include all originally observed variables and values; have useful variable names; 
+1. Load, tidy, and otherwise wrangle the data. Your final dataset should include all originally observed variables and values; have useful variable names; include a weekday vs weekend variable; and encode data with reasonable variable classes. Describe the resulting dataset (e.g. what variables exist, how many observations, etc).
 
-include a weekday vs weekend variable; and encode data with reasonable variable classes. Describe the resulting dataset (e.g. what variables exist, how many observations, etc).
+
 ```{r}
 accel_data = read_csv("data/accel_data.csv") %>%
   janitor::clean_names() %>%
   pivot_longer(cols = "activity_1":"activity_1440", names_to = "time", values_to = "activities" )%>%
   separate(time, c("repeatedword","minute"), sep = "_") %>%
   select(-repeatedword) %>%
-  arrange(minute) %>%
+  arrange(week, day) %>%
   mutate(minute = as.integer(minute)) %>%
   mutate(weekday_or_weekend = if_else(day %in% c("Saturday", "Sunday"), "weekend", "weekday" )) %>%
-  mutate(weekday_or_weekend = factor(weekday_or_weekend))
+  mutate(weekday_or_weekend = factor(weekday_or_weekend)) %>%
+  mutate(hour = minute/60) 
 
 accel_data
 
 ```
 
-Using your tidied dataset, aggregate across minutes to create a total activity variable for each day, and create a table showing these totals. Are any trends apparent?
+2. Using your tidied dataset, aggregate across minutes to create a total activity variable for each day, and create a table showing these totals. Are any trends apparent?
 
 ```{r}
-totals_table = 
-  accel_data %>% group_by(week, day) %>%
-  summarize(total = sum(activities))
+totals_table  = accel_data %>% group_by(day_id) %>%
+  mutate(total = sum(activities)) %>%
+  distinct(week,day,total, weekday_or_weekend) 
 
 totals_table
+```
 
+```{r}
+totals_table %>%
+  ggplot(aes(x = day_id, y = total, color = weekday_or_weekend )) + 
+  geom_point() +
+  labs(x = "Day_id", y = "total activities", title = "Total number of activities each day", 
+       color = "weekday/weekend") +
+  geom_smooth(se = FALSE)
+
+```
+
+3. Accelerometer data allows the inspection activity over the course of the day. Make a single-panel plot that shows the 24-hour activity time courses for each day and use color to indicate day of the week. Describe in words any patterns or conclusions you can make based on this graph.
+
+
+```{r}
+accel_data %>%
+  ggplot(aes(x = hour, y = activities, color = day)) +
+  geom_point() +
+  geom_line(alpha = .5) +
+  geom_smooth(aes(group = day), se = FALSE) +
+  labs(x = "Hour", y = "number of activities", title = "the 24-hour activity time courses for each day", 
+       color = "Day of week")
 ```
 
 
 
-
+### Problem 3
 
 
 
