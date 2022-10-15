@@ -186,8 +186,76 @@ accel_data %>%
 
 
 ### Problem 3
+```{r}
+#load data of problem 3
+library(p8105.datasets)
+data("ny_noaa")
+```
 
 
+To that end, write a short description of the dataset, noting the size and structure of the data, describing some key variables, and indicating the extent to which missing data is an issue. Then, do or answer the following (commenting on the results of each):
+
+
+
+1. Do some data cleaning. Create separate variables for year, month, and day. Ensure observations for temperature, precipitation, and snowfall are given in reasonable units. For snowfall, what are the most commonly observed values? Why?
+
+
+```{r}
+clean_noaa = ny_noaa %>%
+  separate(date, c("year","month","day"), sep = "-") %>%
+  mutate(year = as.numeric(year),
+         month = as.numeric(month),
+         day = as.numeric(day),
+         tmax = as.numeric(tmax)/10,
+         tmin = as.numeric(tmin)/10,
+         prcp = as.numeric(prcp)/10)
+
+clean_noaa
+```
+
+
+
+```{r}
+snowball_values = ny_noaa %>%
+  group_by(snow) %>%
+  summarise(snowball_obs = n())%>%
+  arrange(desc(snowball_obs))
+
+snowball_values
+```
+
+
+2. Make a two-panel plot showing the average max temperature in January and in July in each station across years. Is there any observable / interpretable structure? Any outliers?
+
+```{r}
+clean_noaa %>%
+  mutate(month = month.name[month]) %>%
+  filter(month %in% c ("January", "July")) %>%
+  group_by(id,year,month) %>%
+  summarise(mean_tmax = mean(tmax, na.rm = T)) %>%
+  filter(!is.na(mean_tmax)) %>%#clean missing data
+  ggplot(aes(x = year, y = mean_tmax))+
+  geom_point() +
+  geom_smooth(se = FALSE) +
+  facet_grid(.~month) +
+  theme(panel.spacing = unit(1,"lines")) %>%
+  labs(x = "Year", y = "Average Max Temperature",
+       title = "the average max temperature in January and in July in each station")
+
+```
+
+
+3. Make a two-panel plot showing 
+(i) tmax vs tmin for the full dataset (note that a scatterplot may not be the best option); 
+and (ii) make a plot showing the distribution of snowfall values greater than 0 and less than 100 separately by year.
+
+
+```{r, echo=FALSE, eval=FALSE}
+clean_noaa %>%
+  filter(!is.na(tmax)) %>%
+  filter(!is.na(tmin)) %>%
+  ggplot(aes(x = tmin, y = tmax))
+```
 
 
 
