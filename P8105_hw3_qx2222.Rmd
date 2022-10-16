@@ -283,6 +283,14 @@ dist_snowfall = clean_noaa %>%
 dist_snowfall  
 ```
 
+Finally, combine this two plot into a two-panel plot.
+
+
+```{r}
+final_two_panel = tmax_vs_tmin + dist_snowfall 
+
+final_two_panel
+```
 
 
 
