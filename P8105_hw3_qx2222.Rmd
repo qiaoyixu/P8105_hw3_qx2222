@@ -131,7 +131,7 @@ instacart %>%
 
 
 ### Problem 2
-1. Load, tidy, and otherwise wrangle the data. Your final dataset should include all originally observed variables and values; have useful variable names; include a weekday vs weekend variable; and encode data with reasonable variable classes. Describe the resulting dataset (e.g. what variables exist, how many observations, etc).
+1. Load, tidy, and otherwise wrangle the data. Your final dataset should include all originally observed variables and values; have useful variable names; include a weekday vs weekend variable; and encode data with reasonable variable classes. 
 
 
 ```{r}
@@ -143,19 +143,22 @@ accel_data = read_csv("data/accel_data.csv") %>%
   arrange(week, day) %>%
   mutate(minute = as.integer(minute)) %>%
   mutate(weekday_or_weekend = if_else(day %in% c("Saturday", "Sunday"), "weekend", "weekday" )) %>%
-  mutate(weekday_or_weekend = factor(weekday_or_weekend)) %>%
-  mutate(hour = minute/60) 
+  mutate(weekday_or_weekend = factor(weekday_or_weekend))
 
 accel_data
 
 ```
 
+Describe the resulting dataset:
+
+This cleaned dataset has `r nrow(accel_data)` observations and `r ncol(accel_data)` varibales, such as `r names(accel_data)`. In those varibales, week,day_id, day, minute shows the exact time of collected data. variable activities shows the number of activity happened in each time.  Finally, weekday_or_weekend variable we created shows data collected in weekday or weekend.
+
+
 2. Using your tidied dataset, aggregate across minutes to create a total activity variable for each day, and create a table showing these totals. Are any trends apparent?
 
 ```{r}
 totals_table  = accel_data %>% group_by(day_id) %>%
-  mutate(total = sum(activities)) %>%
-  distinct(week,day,total, weekday_or_weekend) 
+  mutate(total = sum(activities))
 
 totals_table
 ```
@@ -173,11 +176,19 @@ totals_table %>%
 
 ```
 
+
+From the plot we got, we could see the line showed total activities counts on weekday is more stable, compared with the line of weekend. Besides, for the total activities counts on weekday has sightly increasing trend. But for the total activities counts on weekend has sightly decreasing trend.
+
+
+
+
+
 3. Accelerometer data allows the inspection activity over the course of the day. Make a single-panel plot that shows the 24-hour activity time courses for each day and use color to indicate day of the week. Describe in words any patterns or conclusions you can make based on this graph.
 
 
 ```{r}
 accel_data %>%
+  mutate(hour = minute/60) %>%
   ggplot(aes(x = hour, y = activities, color = day)) +
   geom_point() +
   geom_line(alpha = .5) +
