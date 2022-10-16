@@ -166,7 +166,10 @@ totals_table %>%
   geom_point() +
   labs(x = "Day_id", y = "total activities", title = "Total number of activities each day", 
        color = "weekday/weekend") +
-  geom_smooth(se = FALSE)
+  geom_smooth(se = FALSE) +
+  theme_minimal() +
+  theme(legend.position = "bottom",
+        legend.title = element_blank())
 
 ```
 
@@ -228,7 +231,7 @@ snowball_values
 2. Make a two-panel plot showing the average max temperature in January and in July in each station across years. Is there any observable / interpretable structure? Any outliers?
 
 ```{r}
-clean_noaa %>%
+average_maxtemp = clean_noaa %>%
   mutate(month = month.name[month]) %>%
   filter(month %in% c ("January", "July")) %>%
   group_by(id,year,month) %>%
@@ -242,24 +245,30 @@ clean_noaa %>%
   labs(x = "Year", y = "Average Max Temperature",
        title = "the average max temperature in January and in July in each station")
 
+average_maxtemp 
+
 ```
 
 
 3. Make a two-panel plot showing 
 (i) tmax vs tmin for the full dataset (note that a scatterplot may not be the best option); 
-and (ii) make a plot showing the distribution of snowfall values greater than 0 and less than 100 separately by year.
 
-
-```{r, echo=FALSE, eval=FALSE}
+```{r}
 clean_noaa %>%
-  filter(!is.na(tmax)) %>%
-  filter(!is.na(tmin)) %>%
-  ggplot(aes(x = tmin, y = tmax))
+  ggplot(aes(x = tmin, y = tmax))+
+  geom_hex() +
+  labs(x = "Minimum temperature (tenths of degrees C)", y = "Maximum temperature (tenths of degrees C)", 
+       title = "tmax vs tmin for the full dataset", fill = "counts") +
+  scale_x_continuous(n.breaks = 6) +
+  scale_fill_continuous(breaks = c(10000,30000,50000)) +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+  
 ```
 
 
 
-
+(ii) make a plot showing the distribution of snowfall values greater than 0 and less than 100 separately by year.
 
 
 
