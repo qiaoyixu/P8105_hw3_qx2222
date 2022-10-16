@@ -254,7 +254,7 @@ average_maxtemp
 (i) tmax vs tmin for the full dataset (note that a scatterplot may not be the best option); 
 
 ```{r}
-clean_noaa %>%
+tmax_vs_tmin = clean_noaa %>%
   ggplot(aes(x = tmin, y = tmax))+
   geom_hex() +
   labs(x = "Minimum temperature (tenths of degrees C)", y = "Maximum temperature (tenths of degrees C)", 
@@ -263,6 +263,8 @@ clean_noaa %>%
   scale_fill_continuous(breaks = c(10000,30000,50000)) +
   theme_minimal() +
   theme(legend.position = "bottom")
+
+tmax_vs_tmin
   
 ```
 
@@ -270,6 +272,16 @@ clean_noaa %>%
 
 (ii) make a plot showing the distribution of snowfall values greater than 0 and less than 100 separately by year.
 
+```{r}
+dist_snowfall = clean_noaa %>%
+  filter(snow>0&snow<100) %>%
+  mutate(year = factor(year)) %>%
+  ggplot(aes(x = snow, y = year, fill = year))+
+  geom_density_ridges(alpha = .5, scale = 2) +
+  labs(x = "Snowfall(mm)", y = "year", title = "the distribution of snowfall values by year")
+
+dist_snowfall  
+```
 
 
 
