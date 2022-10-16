@@ -259,6 +259,12 @@ average_maxtemp
 
 ```
 
+From this two-panel plot showing the average max temperature in January and in July, we could conclude that the average max temperature in January is much lower than in July, which is very reasonable. First of all, let's see the distribution of average max temperature in January, the temperature is smoothly increasing from 1980 to 1991, then decreased for 4-5 years, and then increased for next 3-4 years. After 1991, the trend of average max temperature starts to fluctuate regularly. There are several outliers, which is much lower than other observations. 
+
+And then, let's see the distribution of average max temperature in July. The trend is much stable than the trend in January. However, outliers also existed, like the very low datapoint in 1987.
+
+
+
 
 3. Make a two-panel plot showing 
 (i) tmax vs tmin for the full dataset (note that a scatterplot may not be the best option); 
@@ -277,6 +283,8 @@ tmax_vs_tmin = clean_noaa %>%
 tmax_vs_tmin
   
 ```
+
+
 
 
 
@@ -302,6 +310,7 @@ final_two_panel = tmax_vs_tmin + dist_snowfall
 final_two_panel
 ```
 
+In this two-panel plot, we could see the result of tmax vs tmin for the full dataset in the left one and the distribution of snowfall values greater than 0 and less than 100 separately by year in the right one. From the left one, we could see that there are several outliers, which are much higher than our normal data points. From the right one, we could see the overall trend of snowfall values are close in each year. However, in recent years, the peaks are not obvious and become more smooth compared with earlier years. 
 
 
 
